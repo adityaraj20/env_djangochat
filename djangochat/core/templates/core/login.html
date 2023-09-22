@@ -1,0 +1,84 @@
+{% extends 'core/base.html' %}
+
+{%block title%} Log in! {%endblock%}
+
+{%block content%}
+<style>
+
+form {
+    width: 25%; /* Equivalent to lg:w-1/4 */
+    padding: 1rem; /* Equivalent to px-4 */
+    margin: 0 auto; /* Equivalent to mx-auto */
+}
+
+label {
+    color: #fff; /* Equivalent to text-white */
+}
+input[type="text"] {
+    width: 100%; /* Equivalent to w-full */
+    margin-top: 0.5rem; /* Equivalent to mt-2 */
+    padding: 0.5rem 1rem; /* Equivalent to px-4 py-2 */
+    border-radius: 0.75rem; /* Equivalent to rounded-xl */
+}
+
+input[type="password"] {
+    width: 100%; /* Equivalent to w-full */
+    margin-top: 0.5rem; /* Equivalent to mt-2 */
+    padding: 0.5rem 1rem; /* Equivalent to px-4 py-2 */
+    border-radius: 0.75rem; /* Equivalent to 
+    rounded-xl */
+}
+
+.errormsg{
+    margin-bottom: 1.25rem; /* Equivalent to mb-5 */
+    padding: 1rem; /* Equivalent to p-4 */
+    border-radius: 0.75rem; /* Equivalent to rounded-xl */
+    background-color: #ef4444; /* Equivalent to bg-red-300 */
+    color: #fff; /* Equivalent to text-white */
+}
+
+.btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem; /* Equivalent to rounded-xl */
+    color: #fff; /* Equivalent to text-white */
+    background-color: #047857; /* Equivalent to bg-teal-800 */
+    transition: background-color 0.2s ease; /* Hover transition */
+    cursor: pointer; /* Hover cursor style */
+}
+
+/* Hover effect */
+.btn:hover {
+    background-color: #065f67; /* Equivalent to hover:bg-teal-700 */
+}
+
+
+</style>
+<div class="conatiner">
+    <h1 class="heading">Log in</h1>
+</div>
+
+<form method="post" action="." class="lg:w-1/4 px-4 mx-auto">
+    {%csrf_token%}
+    <div class="mb-5">
+        <label class="text-white">Username</label>
+        <input type="text" name="username">
+    </div>
+
+    <div class="mb-5">
+        <label class="text-white">Password</label>
+        <input type="password" name="password" class="w-full mt-2 px-4 py-2 rounded-xl">
+    </div>
+
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %} 
+                <div class="errormsg">
+                    <p>{{ error|escape }}</p>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+    <button class="btn">Log in</button>
+</form>
+{%endblock%}

@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+
+{%block title%} Rooms! {%endblock%}
+
+{%block content%}
+<style>
+    div.w-full.flex {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    }
+
+    div.roomContainer {
+        width: 50%;
+        padding: 0.75rem;
+    }
+
+    div.ConatinerBack{
+        padding: 1rem; /* Equivalent to p-4 */
+        background-color: #fff; /* Equivalent to bg-white */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Equivalent to shadow */
+        border-radius: 0.75rem;
+    }
+    
+    h2.Rfont {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+    }
+
+    a.blockref{
+        display: block;
+        padding: 0.625rem 1.25rem; /* Equivalent to px-5 py-3 */
+        border-radius: 0.75rem; /* Equivalent to rounded-xl */
+        color: #fff; /* Equivalent to text-white */
+        background-color: #38a169; /* Equivalent to bg-teal-600 */
+        text-decoration: none;
+        text-align: center;
+    }
+    a.blockref:hover {
+    background-color: #2f855a; /* Equivalent to hover:bg-teal-700 */
+}
+</style>
+<div class="conatiner">
+    <h1 class="heading">Rooms</h1>
+</div>
+<div class="w-full flex"></div>
+    {% for room in rooms %}
+    <div class="roomContainer">
+        <div class="ConatinerBack">
+            <h2 class="Rfont">{{ room.name }}</h2>
+
+            <a href="{% url 'room' room.slug %}" class="blockref">Join</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{%endblock%}

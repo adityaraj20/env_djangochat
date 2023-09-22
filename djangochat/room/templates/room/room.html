@@ -1,0 +1,121 @@
+{% extends 'core/base.html' %}
+
+{%block title%} {{room.name}} | {%endblock%}
+
+{%block content%}
+ <style>
+    div.lg-w-2-4 {
+    width: 50%; /* Equivalent to lg:w-2/4 */
+    margin: 0.75rem; /* Equivalent to mx-4 */
+    margin-left: auto; /* Equivalent to lg:mx-auto */
+    margin-right: auto; /* Equivalent to lg:mx-auto */
+    padding: 1rem; /* Equivalent to p-4 */
+    background-color: #fff; /* Equivalent to bg-white */
+    border-radius: 0.75rem; /* Equivalent to rounded-xl */
+}
+div.chat-messages {
+    margin-top: 0.75rem; /* Equivalent to mt-6 */
+    padding: 1rem; /* Equivalent to p-4 */
+    background-color: #fff;
+    border-radius: 0.75rem; /* Equivalent to rounded-xl */
+    line-height: 1.5;
+}
+
+input.flex-1 {
+    flex: 1; /* Equivalent to flex-1 */
+    margin-right: 0.75rem; /* Equivalent to mr-3 */
+}
+
+button#chat-messages-submit{
+    padding: 0.625rem 1.25rem; /* Equivalent to px-5 py-3 */
+    border-radius: 0.75rem; /* Equivalent to rounded-xl */
+    color: #fff; /* Equivalent to text-white */
+    background-color: #38a169; 
+}
+
+#chat-messages-submit:hover {
+    background-color: #04371e; /* Equivalent to hover:bg-teal-700 */
+}
+
+.chat-messages{
+    height: 400px;
+    overflow-y: auto;
+ }
+
+
+ </style>
+<div class="conatiner">
+    <h1 class="heading">{{room.name}}</h1>
+</div>
+
+<div class="lg-w-2-4">
+    <div class="chat-messages" id="chat-messages">
+        {% for message in message %}
+           <div class="p-4">
+            <p class="font-semibold"> {{message.user.username}} </p>
+            <p> {{message.content}} </p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="lg-w-2-4">
+    <form method="post" action="." class="flex">
+        <input type="text" name="content" class="flex-1 mr-3" placeholder="Your message..." id="chat-messages-input">
+
+    <button class="px-5 py-3 rounded-xl" id="chat-messages-submit">Submit</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ room.slug|json_script:"json-roomname" }}
+{{ request.user.username|json_script:"json-username"}}
+
+
+<script>
+    const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
+    const userName = JSON.parse(document.getElementById('json-username').textContent);
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/'
+        + roomName
+        + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+
+        if (data.message) {
+            let html = '<div class="pm">';
+            html += '<p class="font-semibold">' + data.username + '</p>';
+            html += '<p>' + data.message + '</p></div>';
+
+            document.querySelector('#chat-messages').innerHTML += html;
+        } else {
+            alert('The message was empty!');
+        }
+    };
+    chatSocket.onclose = function(e) {
+        console.log('onclose');
+    };
+
+    document.querySelector('#chat-messages-submit').onclick = function(e) {
+        e.preventDefault();
+
+        const messageInputDom = document.querySelector('#chat-messages-input');
+        const message = messageInputDom.value;
+
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'username': userName,
+            'room': roomName
+        }));
+
+        messageInputDom.value = '';
+
+        return false;
+    };
+</script>
+{%endblock%}
